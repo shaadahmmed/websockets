@@ -1,5 +1,5 @@
-import app from "./app";
 import os from "os";
+import app from "./app";
 
 function getHostAddresses(): string[] {
     const interfaces = os.networkInterfaces();

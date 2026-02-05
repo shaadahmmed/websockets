@@ -8,7 +8,11 @@ export async function createMatchController(req: Request, res: Response) {
     const data = parseSchema(createMatchSchema, req.body, res);
     if (!data) return;
     try {
-        res.status(201).json({ event: await createMatch(data) });
+        const event = await createMatch(data);
+        res.status(201).json({ event });
+        if (req.app.locals.broadcastMatchCreated) {
+            req.app.locals.broadcastMatchCreated(event);
+        }
     } catch (error) {
         handleError(res, error);
     }
