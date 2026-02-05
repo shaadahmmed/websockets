@@ -1,3 +1,4 @@
+import { wsArcjet } from "@/config/arcjet";
 import { MatchTable } from "@/db/schema";
 import { Server as HttpServer } from "http";
 import { WebSocket, WebSocketServer } from "ws";
@@ -27,12 +28,34 @@ export function attachWsServer(server: HttpServer) {
         maxPayload: 1024 * 1024,
     });
 
-    wss.on("connection", (socket: AliveWebSocket) => {
+    wss.on("connection", async (socket: AliveWebSocket) => {
         socket.isAlive = true;
         socket.on("pong", () => (socket.isAlive = true));
 
         sendJson(socket, { message: "Welcome to the WebSocket server!" });
         socket.on("error", console.error);
+    });
+
+    wss.on("upgrade", async (req, socket, head) => {
+        if (wsArcjet) {
+            try {
+                const decision = await wsArcjet.protect(req);
+                if (decision.isDenied()) {
+                    const code = decision.reason.isRateLimit() ? 1013 : 1008;
+                    const reason = decision.reason.isRateLimit()
+                        ? "Too many requests"
+                        : "Forbidden";
+                    socket.write(`${code} ${reason}`);
+                    socket.destroy();
+                    return;
+                }
+            } catch (error) {
+                console.log(`Ws Connection Error`, error);
+                socket.write("1011 Internal Error");
+                socket.destroy();
+                return;
+            }
+        }
     });
 
     const interval = setInterval(() => {
