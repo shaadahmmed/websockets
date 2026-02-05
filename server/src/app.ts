@@ -2,6 +2,7 @@ import cors from "cors";
 import "dotenv/config";
 import express, { Express } from "express";
 import http from "http";
+import commentaryRouter from "./commentary/commentary.route";
 import { securityMiddleware } from "./config/arcjet";
 import matchRouter from "./matches/matches.route";
 import { attachWsServer } from "./ws/ws-server";
@@ -20,6 +21,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/api/matches", matchRouter);
+app.use("/api/matches/:id/commentary", commentaryRouter);
 
 const { broadcastMatchCreated } = attachWsServer(server);
 app.locals.broadcastMatchCreated = broadcastMatchCreated;
