@@ -8,6 +8,20 @@
       "when": 1770257851599,
       "tag": "0000_majestic_mimic",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770259833171,
+      "tag": "0001_omniscient_zarda",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770269107209,
+      "tag": "0002_luxuriant_warbird",
+      "breakpoints": true
     }
   ]
 }
